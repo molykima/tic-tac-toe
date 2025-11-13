@@ -22,10 +22,24 @@ function drawBoard() {
 function addMarker (player, in1, in2) {
     if (grid[in1][in2] === "X" || grid[in1][in2] === "O") {
         console.log("Pick a different spot")
+        cellFull = true;
     } else {
         grid[in1][in2] = player.marker;
         console.log(gameBoard)
+        cellFull = false;
     }
+};
+
+function checkCellsAll (array) {
+    for (let i = 0; i < array.length; i++) {
+        for (let j = 0; j < array[i].length; j++) {
+            if (array[i][j] === "X" || array[i][j] === "O") {
+                cellsTaken += 1
+            } else {
+                ;
+            };
+        };
+    };  
 };
 
 function switchPlayer(current) {
@@ -64,22 +78,42 @@ function checkWinDiagonal (player) {
     };
 };
 
+function checkTieGame () {
+    if (winCondition === false && cellsTaken === 9) {
+        return true
+    } else {
+        ;
+    }
+}
+
 function gamePlay () {
     let currentPlayer = player2;
 
-    while (winCondition === false) {
+    while (winCondition === false && roundCount < 9) {
         currentPlayer = switchPlayer(currentPlayer)
         console.log(`${currentPlayer.name} is up`)
-        let X = prompt("Enter a horizontal grid point");
-        let Y = prompt("Enter a vertical grid point");
-        addMarker(currentPlayer, X, Y);
+        
+        while (cellFull === true) {
+            let X = prompt("Enter a horizontal grid point");
+            let Y = prompt("Enter a vertical grid point");
+            addMarker(currentPlayer, X, Y);
+        };
+
+        cellFull = true;
+
         checkWinHorizontal(currentPlayer);
         checkWinVertical(currentPlayer);
         checkWinDiagonal(currentPlayer);
-        checkTieGame();
+        roundCount += 1
+        console.log(roundCount); 
     };
 
-    console.log(`${currentPlayer.name} is the winner!`)
+    checkCellsAll(grid);
+    if (checkTieGame() === true) {
+        console.log("Tie Game!")
+    } else {
+        console.log(`${currentPlayer.name} is the winner!`)
+    };
 };
 
 const gameBoard = drawBoard();
@@ -87,8 +121,8 @@ const grid = gameBoard.grid;
 const player1 = createPlayer("Tyler", "X");
 const player2 = createPlayer("Amber", "O");
 let winCondition = false;
+let roundCount = 0
+let cellsTaken = 0
+let cellFull = true;
 
 gamePlay();
-
-// need functionality for a tie game
-// need better functionality in the gamePlay to check for if a cell is already filled and replay that turn until an open spot is picked
